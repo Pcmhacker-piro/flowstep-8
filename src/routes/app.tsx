@@ -950,7 +950,7 @@ function AppHome() {
         ? "Edit stopped."
         : failCount === 0
           ? `Updated ${okCount} section${okCount === 1 ? "" : "s"}.`
-          : `Updated ${okCount} · ${failCount} failed.`;
+          : `Updated ${okCount} · ${failCount} failed${failReason ? ` — ${failReason}` : ""}.`;
       setMessages((m) => [...m, { id: uid(), role: "assistant", text: reply }]);
       // Re-pulse the first still-selected target after the iframe re-renders
       // so the user can see the change land on the element they were editing.
