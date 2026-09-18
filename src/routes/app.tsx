@@ -768,8 +768,16 @@ function AppHome() {
   };
 
   const extractSnippet = (raw: string) => {
-    let s = raw.replace(/^```(?:html)?\s*/i, "");
-    s = s.replace(/```\s*$/i, "");
+    let s = raw.trim();
+    // Prefer the contents of a fenced block when the model wraps its answer.
+    const fenced = s.match(/```(?:html)?\s*([\s\S]*?)```/i);
+    if (fenced?.[1]) s = fenced[1];
+    s = s.replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
+    // Drop any prose before the first tag and after the last closing tag.
+    const start = s.indexOf("<");
+    if (start > 0) s = s.slice(start);
+    const end = s.lastIndexOf(">");
+    if (end !== -1 && end < s.length - 1) s = s.slice(0, end + 1);
     return s.trim();
   };
 
@@ -928,6 +936,13 @@ function AppHome() {
 
       const okCount = results.filter((r) => r.status === "fulfilled").length;
       const failCount = results.length - okCount;
+      const firstFailure = results.find((r) => r.status === "rejected") as
+        | PromiseRejectedResult
+        | undefined;
+      const failReason =
+        firstFailure && firstFailure.reason instanceof Error
+          ? firstFailure.reason.message
+          : "";
       const isAbort =
         controller.signal.aborted &&
         results.every((r) => r.status === "rejected");
