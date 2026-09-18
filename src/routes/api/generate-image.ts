@@ -31,9 +31,18 @@ ${outputContract}
 - Fonts: Instrument Sans (400,500,600,700) and Geist Mono (400,500).
 
 SHARED PRODUCT-SYSTEM STANDARD
-- The screen belongs to a coordinated multi-page SaaS product. Preserve the supplied product name, navigation order, user identity, data vocabulary, colour tokens, radii, and typography exactly.
-- Desktop shell: 236px sidebar plus fluid content. Sidebar contains product mark, grouped navigation, command/search trigger, and a genuinely useful signed-in profile block pinned low. Do not make every page a dashboard.
-- Responsive behavior must be encoded with Tailwind: desktop sidebar becomes a compact mobile header; grids collapse; tables become readable card rows; no horizontal overflow.
+- The screen belongs to a coordinated multi-page product. Preserve the supplied product name, navigation order, user identity, data vocabulary, colour tokens, radii, and typography exactly.
+- CHOOSE THE SHELL FROM THE BRIEF. There is no default layout. Read what the product actually is, then pick the shell a real design team would pick for it, and keep that same shell across every screen of this run:
+  - left sidebar shell — deep multi-section tools: project management, admin consoles, CRMs, analytics suites
+  - top navigation shell — content and consumer products: storefronts, booking, media, learning, social, docs
+  - focused single-column / centered shell — checkout, onboarding, forms, auth, wizards, settings-only tools, simple utilities
+  - split or dual-pane shell — inbox/messaging, code or design tools, map-plus-list, review queues
+  - board/canvas shell — kanban, whiteboard, scheduling, editors, anything spatial
+  - command-bar / rail shell — keyboard-first, dense operational tooling
+  - chrome-less shell — presentation, kiosk, player, mobile-first, or single-purpose screens
+- Never bolt on a sidebar, KPI strip, workspace switcher, notification bell, or profile block just because SaaS screens usually have one. Every chrome element must earn its place for THIS product; omit whatever the brief does not justify.
+- Two different briefs must not produce the same skeleton. Let the domain set navigation model, information density, page rhythm, and the primary object on screen.
+- Responsive behavior must be encoded: the chosen shell collapses sensibly on mobile; grids collapse; tables become readable card rows; no horizontal overflow.
 - Use a precise 4px spacing scale. Cards use 8px radius or less. Buttons are 36-40px high. Borders are hairline. Shadows are restrained.
 - One primary action per screen. Avoid glassmorphism, oversized radii, decorative blobs, emoji, and template-like empty whitespace.
 - Typography: Instrument Sans, 12px metadata, 14px body, 16px card titles, 28-32px page title. Letter spacing is 0. Use Geist Mono for dates, times, counts, and keyboard hints.
