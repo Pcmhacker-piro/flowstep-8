@@ -232,7 +232,13 @@ const premiumCraftBar = `PREMIUM CRAFT BAR (non-negotiable quality gate)
 - Interaction states are complete: hover, active, focus-visible ring, disabled, selected, and empty/error states on the components that need them, with 150-200ms cubic-bezier(0.2, 0, 0, 1) transitions.
 - Icons are consistent inline stroke SVGs at one stroke width and one size per context. Data visualisation is hand-built with SVG/CSS and accurate axes, labels, and legends.
 - Accessibility is part of craft: body text contrast at or above 4.5:1, non-text UI at 3:1, visible focus rings, and semantic landmarks.
-- Final pass before output: scan for misalignment, uneven gaps, clipped or overflowing text, duplicated blocks, inconsistent casing, and lonely sections — and fix them. Anything that looks like an AI template must be rebuilt.`;
+- Final pass before output: scan for misalignment, uneven gaps, clipped or overflowing text, duplicated blocks, inconsistent casing, and lonely sections — and fix them. Anything that looks like an AI template must be rebuilt.
+
+NO FIXED TEMPLATE (layout is decided by the brief, every time)
+- Never default to a sidebar, never default to a top navbar, never default to KPI cards. Re-derive the layout from the user's prompt on every run, as if you had never designed a screen before.
+- Before composing, silently answer: what is the primary object on this screen, how does the user move through this product, and what density does the domain demand? Let those answers — not habit — pick the shell, navigation model, and section order.
+- A music player, a trading terminal, a recipe app, and a hospital dashboard must produce four visibly different skeletons. If two runs could be mistaken for the same template with different colours, the layout is wrong — rebuild it from the brief.
+- Chrome elements (sidebars, navbars, tabs, rails, command bars, bottom bars) appear only when the brief justifies them, and their position and style follow the product's nature.`;
 
 function systemPrompt(kind: PlannedScreen["kind"]) {
   return `${kind === "marketing" ? marketingDesignSystem : appDesignSystem}\n\n${sharedColourSystem}\n\n${premiumCraftBar}`;
