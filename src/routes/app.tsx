@@ -484,6 +484,28 @@ function AppHome() {
   }, [addImageToCanvas, toReferenceDataUrl]);
 
 
+  // Paste an image (screenshot, copied file) anywhere in the app — including
+  // while typing in the prompt box — and attach it as a reference.
+  useEffect(() => {
+    const onPasteAnywhere = (e: ClipboardEvent) => {
+      const cd = e.clipboardData;
+      if (!cd) return;
+      const files = Array.from(cd.files ?? []).filter((f) => f.type.startsWith("image/"));
+      const fromItems = Array.from(cd.items ?? [])
+        .filter((i) => i.kind === "file" && i.type.startsWith("image/"))
+        .map((i) => i.getAsFile())
+        .filter((f): f is File => !!f);
+      const picked = files.length ? files : fromItems;
+      if (!picked.length) return; // plain text paste keeps default behaviour
+      e.preventDefault();
+      const dt = new DataTransfer();
+      picked.forEach((f) => dt.items.add(f));
+      onPickFiles(dt.files);
+    };
+    window.addEventListener("paste", onPasteAnywhere);
+    return () => window.removeEventListener("paste", onPasteAnywhere);
+  }, [onPickFiles]);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
   }, []);
