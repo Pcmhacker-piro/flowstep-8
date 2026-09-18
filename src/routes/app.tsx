@@ -484,6 +484,28 @@ function AppHome() {
   }, [addImageToCanvas, toReferenceDataUrl]);
 
 
+  // Paste an image (screenshot, copied file) anywhere in the app — including
+  // while typing in the prompt box — and attach it as a reference.
+  useEffect(() => {
+    const onPasteAnywhere = (e: ClipboardEvent) => {
+      const cd = e.clipboardData;
+      if (!cd) return;
+      const files = Array.from(cd.files ?? []).filter((f) => f.type.startsWith("image/"));
+      const fromItems = Array.from(cd.items ?? [])
+        .filter((i) => i.kind === "file" && i.type.startsWith("image/"))
+        .map((i) => i.getAsFile())
+        .filter((f): f is File => !!f);
+      const picked = files.length ? files : fromItems;
+      if (!picked.length) return; // plain text paste keeps default behaviour
+      e.preventDefault();
+      const dt = new DataTransfer();
+      picked.forEach((f) => dt.items.add(f));
+      onPickFiles(dt.files);
+    };
+    window.addEventListener("paste", onPasteAnywhere);
+    return () => window.removeEventListener("paste", onPasteAnywhere);
+  }, [onPickFiles]);
+
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
   }, []);
@@ -768,8 +790,16 @@ function AppHome() {
   };
 
   const extractSnippet = (raw: string) => {
-    let s = raw.replace(/^```(?:html)?\s*/i, "");
-    s = s.replace(/```\s*$/i, "");
+    let s = raw.trim();
+    // Prefer the contents of a fenced block when the model wraps its answer.
+    const fenced = s.match(/```(?:html)?\s*([\s\S]*?)```/i);
+    if (fenced?.[1]) s = fenced[1];
+    s = s.replace(/^```(?:html)?\s*/i, "").replace(/```\s*$/i, "");
+    // Drop any prose before the first tag and after the last closing tag.
+    const start = s.indexOf("<");
+    if (start > 0) s = s.slice(start);
+    const end = s.lastIndexOf(">");
+    if (end !== -1 && end < s.length - 1) s = s.slice(0, end + 1);
     return s.trim();
   };
 
@@ -928,6 +958,13 @@ function AppHome() {
 
       const okCount = results.filter((r) => r.status === "fulfilled").length;
       const failCount = results.length - okCount;
+      const firstFailure = results.find((r) => r.status === "rejected") as
+        | PromiseRejectedResult
+        | undefined;
+      const failReason =
+        firstFailure && firstFailure.reason instanceof Error
+          ? firstFailure.reason.message
+          : "";
       const isAbort =
         controller.signal.aborted &&
         results.every((r) => r.status === "rejected");
@@ -935,7 +972,7 @@ function AppHome() {
         ? "Edit stopped."
         : failCount === 0
           ? `Updated ${okCount} section${okCount === 1 ? "" : "s"}.`
-          : `Updated ${okCount} · ${failCount} failed.`;
+          : `Updated ${okCount} · ${failCount} failed${failReason ? ` — ${failReason}` : ""}.`;
       setMessages((m) => [...m, { id: uid(), role: "assistant", text: reply }]);
       // Re-pulse the first still-selected target after the iframe re-renders
       // so the user can see the change land on the element they were editing.
@@ -1653,13 +1690,6 @@ function AppHome() {
               if (e.dataTransfer?.files?.length) {
                 e.preventDefault();
                 onPickFiles(e.dataTransfer.files);
-              }
-            }}
-            onPaste={(e) => {
-              const files = e.clipboardData?.files;
-              if (files && files.length) {
-                e.preventDefault();
-                onPickFiles(files);
               }
             }}
             
