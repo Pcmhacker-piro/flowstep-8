@@ -214,8 +214,19 @@ function artDirectionPrompt(direction: ArtDirection, runId: string, hasReference
 - Premium means rigorous alignment, specific content, disciplined restraint, refined states, and a memorable composition — not extra decoration.${hasReferences ? "\n- Uploaded references are the strongest visual instruction. Preserve their recognizable composition and use this art direction only to refine unresolved details." : ""}`;
 }
 
+const premiumCraftBar = `PREMIUM CRAFT BAR (non-negotiable quality gate)
+- Target the standard of Linear, Stripe, Vercel, Arc, and Raycast marketing/product surfaces. A reviewer must believe this shipped to real customers.
+- Optical precision: every element aligns to the 4px grid, repeated elements share identical padding, corner radii, border weights, and icon sizes. No stray one-off values.
+- Type craft: a clear 5-step scale, tight tracking on large display text (-0.02em to -0.03em), comfortable 1.5-1.6 line-height on body copy, and 60-75 character measure. Never leave orphaned single words on headline lines.
+- Depth is earned through layered neutrals, hairline borders, and one restrained shadow tier (e.g. 0 1px 2px plus 0 8px 24px at very low alpha) — never heavy drop shadows or glows.
+- Content is specific and credible: real product names, plausible metrics, human names, dates, statuses, currency, and copy written by a product writer. No lorem ipsum, no "Feature One", no placeholder dashes.
+- Interaction states are complete: hover, active, focus-visible ring, disabled, selected, and empty/error states on the components that need them, with 150-200ms cubic-bezier(0.2, 0, 0, 1) transitions.
+- Icons are consistent inline stroke SVGs at one stroke width and one size per context. Data visualisation is hand-built with SVG/CSS and accurate axes, labels, and legends.
+- Accessibility is part of craft: body text contrast at or above 4.5:1, non-text UI at 3:1, visible focus rings, and semantic landmarks.
+- Final pass before output: scan for misalignment, uneven gaps, clipped or overflowing text, duplicated blocks, inconsistent casing, and lonely sections — and fix them. Anything that looks like an AI template must be rebuilt.`;
+
 function systemPrompt(kind: PlannedScreen["kind"]) {
-  return `${kind === "marketing" ? marketingDesignSystem : appDesignSystem}\n\n${sharedColourSystem}`;
+  return `${kind === "marketing" ? marketingDesignSystem : appDesignSystem}\n\n${sharedColourSystem}\n\n${premiumCraftBar}`;
 }
 
 function buildScreenPrompt(prompt: string, screens: PlannedScreen[], screen: PlannedScreen, direction: ArtDirection, runId: string, hasReferences: boolean) {
