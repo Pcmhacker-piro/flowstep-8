@@ -1692,13 +1692,6 @@ function AppHome() {
                 onPickFiles(e.dataTransfer.files);
               }
             }}
-            onPaste={(e) => {
-              const files = e.clipboardData?.files;
-              if (files && files.length) {
-                e.preventDefault();
-                onPickFiles(files);
-              }
-            }}
             
             style={{
               cursor: tool === "hand" || spaceHeld ? "grab" : tool === "text" ? "text" : tool === "rect" ? "crosshair" : tool === "pen" || tool === "eraser" ? "crosshair" : "default",
